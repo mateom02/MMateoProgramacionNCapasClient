@@ -1,0 +1,20 @@
+:root {
+    --bg-main: #121317;
+    --bg-componente: #15171a;
+    --bg-componente-2: #16171b;
+    
+    --text-main:#d7d9dd;
+    --text-secondary:#A8FF53;
+    
+    --accent-primary: #FFCB45;
+    --accent-secondary:#F2A636;
+    --accent-blue:#61DAFB;
+}
+
+body{
+    background-color: var(--bg-main) !important;
+    color:var(--text-main);
+    font-family: 'Inter', sans-serif;
+    margin:0;
+    padding: 0;
+}

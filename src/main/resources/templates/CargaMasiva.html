@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Layout}">
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head >
+    <body layout:fragment="body">
+        <div class="container">
+            <h2 class="bg-black text-white text-center" >Carga masiva</h2>
+            <button id="mostrarFormulario" class="btn btn-primary" onclick="mostrarFormulario()">Mostrar Formulario</button>
+            <div id="botones" class="row" style="display:none">
+                <div class="btn-group">
+                    <button class="btn btn-success col-md-6" id="btnExcel">Excel</button>
+                    <button class="btn btn-primary col-md-6" id="btnTxt">TXT</button>
+                </div>
+            </div>
+            <div id="formularioArchivo" style="display: none">
+                <br>
+                <form action="/UsuarioIndex/CargaMasiva" method="post" enctype="multipart/form-data">
+                    <input type="file" id="archivo" name="archivo" accept=".xlsx,.txt">
+                    <button type="submit" class="btn btn-success" id="cargaMasiva">Subir Archivo</button>
+                </form>
+            </div>
+        </div>
+
+        <div th:if="${correcto}">
+            <p class="text-succes">Los datos de tu archivo son validos!</p>
+            <a class="btn btn-success" th:href="@{/UsuarioIndex/CargaMasiva/procesar}">Procesar</a>
+        </div>
+
+        <div th:if="${listaErrores}">
+            <p class="text-danger">Tu archivo tiene algunos errores!</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Fila</th>
+                        <th scope="col">Campo</th>
+                        <th scope="col">Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="errores :${listaErrores}">
+                        <th scope="row" th:text="${errores.linea}"></th>
+                        <td th:text="${errores.campo}"></td>
+                        <td th:text="${errores.descripcion}"></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            function mostrarFormulario() {
+                document.getElementById("mostrarFormulario").style.display = "none";
+                document.getElementById("botones").style.display = "block";
+            }
+
+            let tipoArchivo = "";
+
+            document.getElementById("btnExcel").addEventListener("click", function () {
+                tipoArchivo = "xlsx";
+                document.getElementById("formularioArchivo").style.display = "block";
+                document.getElementById("archivo").setAttribute("accept", ".xlsx");
+                document.getElementById("cargaMasiva").classList.remove("btn-primary");
+                document.getElementById("cargaMasiva").classList.add("btn-success");
+            });
+
+            document.getElementById("btnTxt").addEventListener("click", function () {
+
+                tipoArchivo = "txt"; // Tipo de archivo que se espera
+                document.getElementById("formularioArchivo").style.display = "block";
+                document.getElementById("archivo").setAttribute("accept", ".txt");
+                document.getElementById("cargaMasiva").classList.remove("btn-success");
+                document.getElementById("cargaMasiva").classList.add("btn-primary");
+            });
+
+            document.getElementById("archivo").addEventListener("change", function () {
+                if (this.files.length > 0) {
+                    var fileName = this.files[0].name;
+                    var fileExtension = fileName.split('.').pop().toLowerCase();
+
+                    if (fileExtension !== tipoArchivo) {
+                        alert("Por favor, seleccione un archivo " + tipoArchivo.toUpperCase() + " válido.");
+                        this.value = "";
+                    }
+                }
+            });
+        </script>
+        <script th:if="${msgCargaCorrecta}" th:inline="javascript">
+            Swal.fire({
+                title: [[${msgCargaCorrecta}]],
+                icon: "success",
+                draggable: true
+            });
+        </script>
+        
+        <script th:if="${msgCargaError}" th:inline="javascript">
+            Swal.fire({
+                title: [[${msgCargaError}]],
+                icon: "error",
+                draggable: true
+            });
+        </script>
+    </body>
+</html>
