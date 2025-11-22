@@ -222,7 +222,7 @@ public class UsuarioIndex {
 
         MultiValueMap<String, Object> multipartRequest = new LinkedMultiValueMap<>();
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType(MediaType.ALL);
+        requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         if (imagenFile != null) {
             HttpHeaders fileHeaders = new HttpHeaders();
@@ -248,22 +248,24 @@ public class UsuarioIndex {
             multipartRequest.add("file", filePart);
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String usuarioJson;
-        try {
-            usuarioJson = objectMapper.writeValueAsString(usuario);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error al convertir usuario a JSON", e);
-        }
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String usuarioJson;
+//        try {
+//            usuarioJson = objectMapper.writeValueAsString(usuario);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException("Error al convertir usuario a JSON", e);
+//        }
+//
+//        HttpHeaders jsonHeaders = new HttpHeaders();
+//        jsonHeaders.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<String> usuarioPart = new HttpEntity<>(usuarioJson, jsonHeaders);
+//        multipartRequest.add("usuario", usuarioPart);
 
-        HttpHeaders jsonHeaders = new HttpHeaders();
-        jsonHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> usuarioPart = new HttpEntity<>(usuarioJson, jsonHeaders);
-        multipartRequest.add("usuario", usuarioPart);
+       
+        HttpEntity request = new HttpEntity<>(usuario, requestHeaders);
+//        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(multipartRequest, requestHeaders);
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(multipartRequest, requestHeaders);
-
-        ResponseEntity<String> response = restTemplate.exchange(urlBase + "api/usuario", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(urlBase + "api/usuario/add", HttpMethod.POST, request, String.class);
         int status = response.getStatusCode().value();
 
         redirectAttributes.addFlashAttribute("successMessage", "El usuario " + usuario.getUserName() + " se creo con exito.");
