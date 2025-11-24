@@ -1,8 +1,10 @@
 package com.digis01.MMateoProgramacionNCapas.ML;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class Usuario {
@@ -21,9 +23,7 @@ public class Usuario {
     private String Celular;
     private String Curp;
     private String Imagen;
-    @JsonIgnore
     public Rol Rol;
-  @JsonIgnore
     public List<Direccion> Direcciones;
 
     public Usuario() {

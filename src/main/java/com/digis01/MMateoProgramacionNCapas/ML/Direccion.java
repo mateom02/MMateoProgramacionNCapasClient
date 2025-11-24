@@ -10,7 +10,6 @@ public class Direccion {
 
     private String NumeroInterior;
     private String NumeroExterior;
-  @JsonIgnore
     public Colonia Colonia;
 
 
