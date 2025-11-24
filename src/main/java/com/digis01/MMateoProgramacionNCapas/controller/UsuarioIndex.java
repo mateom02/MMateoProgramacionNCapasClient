@@ -10,6 +10,7 @@ import com.digis01.MMateoProgramacionNCapas.ML.Rol;
 import com.digis01.MMateoProgramacionNCapas.ML.Usuario;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
@@ -58,13 +60,13 @@ public class UsuarioIndex {
                 urlBase + "api/usuario",
                 HttpMethod.GET,
                 HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Usuario>>>() {
-        });
+                });
 
         ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                 urlBase + "api/rol",
                 HttpMethod.GET,
                 HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
-        });
+                });
 
         if (responseEntityUsuario.getStatusCode().value() == 200 && responseEntityRol.getStatusCode().value() == 200) {
             Result resultUsuario = responseEntityUsuario.getBody();
@@ -86,17 +88,17 @@ public class UsuarioIndex {
         ResponseEntity<Result<Usuario>> responseEntityUsuario = restTemplate.exchange(urlBase + "api/usuario/" + idUsuario,
                 HttpMethod.GET, HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Result<Usuario>>() {
-        });
+                });
 
         ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                 urlBase + "api/rol",
                 HttpMethod.GET,
                 HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
-        });
+                });
 
         ResponseEntity<Result<List<Pais>>> responseEntityPais = restTemplate.exchange(
                 urlBase + "api/pais", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Pais>>>() {
-        });
+                });
 
         if (responseEntityUsuario.getStatusCode().value() == 200
                 && responseEntityRol.getStatusCode().value() == 200
@@ -122,13 +124,13 @@ public class UsuarioIndex {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Result<List<Pais>>> responseEntityPaises = restTemplate.exchange(
                 urlBase + "api/pais", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Pais>>>() {
-        });
+                });
 
         ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                 urlBase + "api/rol",
                 HttpMethod.GET,
                 HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
-        });
+                });
 
         if (responseEntityPaises.getStatusCode().value() == 200 && responseEntityRol.getStatusCode().value() == 200) {
             Result resultPaises = responseEntityPaises.getBody();
@@ -138,14 +140,14 @@ public class UsuarioIndex {
 
             Usuario usuario = new Usuario();
 
-            usuario.setNombre("Fernanda");
-            usuario.setApellidoPaterno("Del Carmen");
-            usuario.setApellidoMaterno("Diaz");
-            usuario.setUserName("fermen");
+            usuario.setNombre("Dioni");
+            usuario.setApellidoPaterno("Mateo");
+            usuario.setApellidoMaterno("Martinez");
+            usuario.setUserName("dioni1");
             usuario.setCurp("012345678912345678");
             usuario.setSexo("F");
             usuario.setFechaNacimiento(new Date());
-            usuario.setEmail("fermen@gmail.com");
+            usuario.setEmail("dioni1@gmail.com");
             usuario.setTelefono("2261164021");
             usuario.setCelular("2261164021");
             usuario.setPassword("1Ahfasaskfas");
@@ -168,8 +170,9 @@ public class UsuarioIndex {
 
     @PostMapping("add")
     public String Add(@ModelAttribute("usuario") Usuario usuario,
-            BindingResult bindingResult, Model model,
-            RedirectAttributes redirectAttributes, @RequestParam("imagenFile") MultipartFile imagenFile) throws IOException {
+                      BindingResult bindingResult, Model model,
+                      RedirectAttributes redirectAttributes,
+                      @RequestParam("imagenFile") MultipartFile imagenFile) throws IOException {
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -177,13 +180,13 @@ public class UsuarioIndex {
         if (bindingResult.hasErrors()) {
             ResponseEntity<Result<List<Pais>>> responseEntityPaises = restTemplate.exchange(
                     urlBase + "api/pais", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Pais>>>() {
-            });
+                    });
 
             ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                     urlBase + "api/rol",
                     HttpMethod.GET,
                     HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
-            });
+                    });
 
             if (responseEntityPaises.getStatusCode().value() == 200 && responseEntityRol.getStatusCode().value() == 200) {
                 Result resultPaises = responseEntityPaises.getBody();
@@ -198,7 +201,7 @@ public class UsuarioIndex {
 
                 ResponseEntity<Result<List<Estado>>> responseEntityEstados = restTemplate.exchange(
                         urlBase + "api/estado/" + usuario.Direcciones.get(0).Colonia.Municipio.Estado.Pais.getIdPais(), HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Estado>>>() {
-                });
+                        });
                 if (responseEntityEstados.getStatusCode().value() == 200) {
                     Result resultEstados = responseEntityEstados.getBody();
                     model.addAttribute("estados", resultEstados.object);
@@ -206,7 +209,7 @@ public class UsuarioIndex {
                     if (usuario.Direcciones.get(0).Colonia.Municipio.Estado.getIdEstado() > 0) {
                         ResponseEntity<Result<List<Municipio>>> responseEntityMunicipios = restTemplate.exchange(
                                 urlBase + "api/estado/" + usuario.Direcciones.get(0).Colonia.Municipio.Estado.Pais.getIdPais(), HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Municipio>>>() {
-                        });
+                                });
 
                         if (responseEntityEstados.getStatusCode().value() == 200) {
                             Result resultMunicipios = responseEntityEstados.getBody();
@@ -245,77 +248,103 @@ public class UsuarioIndex {
             };
 
             HttpEntity<ByteArrayResource> filePart = new HttpEntity<>(fileAsResource, fileHeaders);
-            multipartRequest.add("file", filePart);
+            multipartRequest.add("imagenFile", filePart);
         }
 
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        String usuarioJson;
-//        try {
-//            usuarioJson = objectMapper.writeValueAsString(usuario);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException("Error al convertir usuario a JSON", e);
-//        }
-//
-//        HttpHeaders jsonHeaders = new HttpHeaders();
-//        jsonHeaders.setContentType(MediaType.APPLICATION_JSON);
-//        HttpEntity<String> usuarioPart = new HttpEntity<>(usuarioJson, jsonHeaders);
-//        multipartRequest.add("usuario", usuarioPart);
+        HttpHeaders jsonHeaders = new HttpHeaders();
+        jsonHeaders.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Usuario> usuarioPart = new HttpEntity<>(usuario, jsonHeaders);
+        multipartRequest.add("usuario", usuarioPart);
 
-       
-        HttpEntity request = new HttpEntity<>(usuario, requestHeaders);
-//        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(multipartRequest, requestHeaders);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(multipartRequest, requestHeaders);
 
-        ResponseEntity<String> response = restTemplate.exchange(urlBase + "api/usuario/add", HttpMethod.POST, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(urlBase + "api/usuario", HttpMethod.POST, requestEntity, String.class);
+
         int status = response.getStatusCode().value();
 
         redirectAttributes.addFlashAttribute("successMessage", "El usuario " + usuario.getUserName() + " se creo con exito.");
         return "redirect:/UsuarioIndex";
     }
 
-//    @GetMapping("Estado/{idPais}")
-//    @ResponseBody///NO usar
-//    public Result EstadosByIdPais( @PathVariable ("idPais") int idPais) {
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        ResponseEntity<Result<List<Estado>>> responseEntityEstados = restTemplate.exchange(urlBase+ "estado/" + idPais,
-//                HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Estado>>>(){});
-//        
-//        if(responseEntityEstados.getStatusCode().value() ==200){
-//            Result result = responseEntityEstados.getBody();
-//            return result;
-//        }else{
-//            return null;
-//        }
-//    }
-//
-//    @GetMapping("Municipio/{idEstado}")
-//    @ResponseBody
-//    public Result MunicipiosByIdEstado(@PathVariable(value = "idEstado") int idEstado) {
-//        Result result = municipioJPADAOImplementacion.GetByIdEstado(idEstado);
-//        return result;
-//    }
-//
-//    @GetMapping("Colonia/{idMunicipio}")
-//    @ResponseBody
-//    public Result ColoniasByIdMunicipio(@PathVariable(value = "idMunicipio") int idMunicipio) {
-//        Result result = coloniaJPADAOImplementacion.GetByIdMunicipio(idMunicipio);
-//
-//        return result;
-//    }
-//
-//    @GetMapping("Direccion/{codigoPostal}")
-//    @ResponseBody
-//    public Result DireccionByCodigoPostal(@PathVariable(value = "codigoPostal") String codigoPostal) {
-//        Result result = coloniaDAOImplementacion.GetByCodigoPostal(codigoPostal);
-//        return result;
-//    }
-//
-//    @GetMapping("DireccionById/{idDireccion}")
-//    @ResponseBody
-//    public Result DireccionById(@PathVariable(value = "idDireccion") int idDireccion) {
-//        Result result = direccionDAOImplementacion.GetById(idDireccion);
-//        return result;
-//    }
+    @PostMapping("update")
+    public String Update(@ModelAttribute("usuario") Usuario usuario, RedirectAttributes redirectAttributes) {
+
+        //Hacer peticion
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders jsonHeader = new HttpHeaders();
+        jsonHeader.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Usuario> usuarioEntidad = new HttpEntity<>(usuario, jsonHeader);
+        ResponseEntity<String> response = restTemplate.exchange(urlBase + "api/usuario/" + usuario.getIdUsuario(), HttpMethod.PUT, usuarioEntidad, String.class);
+
+        int status = response.getStatusCode().value();
+
+        redirectAttributes.addFlashAttribute("msgUsuarioEditado", "El usuario " + usuario.getUserName() + " se edito con exito");
+        return "redirect:/UsuarioIndex/usuario-detalles/" + usuario.getIdUsuario();
+
+    }
+
+    @PostMapping("addDireccion")
+    public String AddDireccion(@ModelAttribute("Direccion") Direccion direccion, @ModelAttribute("usuario") Usuario usuario, RedirectAttributes redirectAttributes) {
+
+        //Agregar lo de BindingResult
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders jsonHeader = new HttpHeaders();
+        jsonHeader.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Direccion> direccionData = new HttpEntity<>(direccion, jsonHeader);
+        ResponseEntity<String> response = restTemplate.exchange(urlBase + "api/direccion/" + usuario.getIdUsuario(), HttpMethod.POST, direccionData, String.class);
+
+        int status = response.getStatusCode().value();
+        //RedirectCon mensaje
+        redirectAttributes.addFlashAttribute("msgDireccionAgregada", "La direccion se agregó correctamente");
+        return "redirect:/UsuarioIndex/usuario-detalles/" + usuario.getIdUsuario();
+    }
+
+    @PostMapping("updateDireccion/{idUsuario}")
+    public String UpdateDireccion(@ModelAttribute("Direccion") Direccion direccion, @PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) {
+
+        RestTemplate restTemplate  = new RestTemplate();
+        HttpHeaders jsonHeader = new HttpHeaders();
+        jsonHeader.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Direccion> direccionData = new HttpEntity<>(direccion, jsonHeader);
+        ResponseEntity<String> response = restTemplate.exchange(urlBase+ "api/direccion/" + idUsuario, HttpMethod.PUT, direccionData, String.class);
+
+        int status = response.getStatusCode().value();
+
+        redirectAttributes.addFlashAttribute("msgDireccionEditada", "La direccion se editó correctamente");
+        return "redirect:/UsuarioIndex/usuario-detalles/" + idUsuario;
+    }
+
+    @PostMapping
+    public String GetAllDinamico(@ModelAttribute("usuario") Usuario usuario, Model model) {
+
+        RestTemplate restTemplate= new RestTemplate();
+        HttpEntity<Usuario> usuarioData = new HttpEntity<>(usuario);
+        ResponseEntity<Result<List<Rol>>> resultResponseEntityRoles = restTemplate.exchange(urlBase + "api/rol",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<List<Rol>>>() {
+                });
+
+        ResponseEntity<Result<List<Usuario>>> responseEntity = restTemplate.exchange(
+                urlBase + "api/usuario/search",
+                HttpMethod.POST,
+                usuarioData,
+                new ParameterizedTypeReference<Result<List<Usuario>>>() {
+        });
+
+        //Manejar el error
+        if(responseEntity.getStatusCode().value() == 200 && resultResponseEntityRoles.getStatusCode().value() ==200) {
+            Result resultUsuarios = responseEntity.getBody();
+            Result resultRoles = resultResponseEntityRoles.getBody();
+            model.addAttribute("usuarios", resultUsuarios.object);
+            model.addAttribute("roles", resultRoles.object);
+            model.addAttribute("usuario", usuario);
+        }
+
+        return "UsuarioIndex";
+
+    }
+
 //
 //    //Carga masiva
 //    @GetMapping("CargaMasiva")
@@ -507,47 +536,13 @@ public class UsuarioIndex {
 //
 //
 //
-//    @PostMapping("update")
-//    public String Update(@ModelAttribute("usuario") Usuario usuario, RedirectAttributes redirectAttributes) {
+
 //
-////        Result result = usuarioDAOImplementation.Update(usuario);
-//        Result result = usuarioJPADAOImplementacion.Update(usuario);
-//        redirectAttributes.addFlashAttribute("msgUsuarioEditado", "El usuario " + usuario.getUserName() + " se edito con exito");
-//        return "redirect:/UsuarioIndex/usuario-detalles/" + usuario.getIdUsuario();
+
 //
-//    }
+
 //
-//    @PostMapping
-//    public String UsuarioIndex(@ModelAttribute("usuario") Usuario usuario, Model model) {
-//
-//        Result result = usuarioJPADAOImplementacion.GetAllDinamico(usuario);
-//        model.addAttribute("usuarios", result.objects);
-//        model.addAttribute("usuario", usuario);
-//        model.addAttribute("roles", rolJPADAOImplementacion.GetAll().objects);
-//        return "UsuarioIndex";
-//
-//    }
-//
-//    @PostMapping("addDireccion")
-//    public String AddDireccion(@ModelAttribute("Direccion") Direccion direccion, @ModelAttribute("usuario") Usuario usuario, RedirectAttributes redirectAttributes) {
-//
-//        //Agregar lo de BindingResult
-//        //Result result = direccionDAOImplementacion.AddByIdUsario(direccion, usuario.getIdUsuario());
-//        Result result = direccionJPADAOImplementacion.AddByIdUsario(direccion, usuario.getIdUsuario());
-//
-//        //RedirectCon mensaje
-//        redirectAttributes.addFlashAttribute("msgDireccionAgregada", "La direccion se agregó correctamente");
-//        return "redirect:/UsuarioIndex/usuario-detalles/" + usuario.getIdUsuario();
-//    }
-//
-//    @PostMapping("updateDireccion/{idUsuario}")
-//    public String UpdateDireccion(@ModelAttribute("Direccion") Direccion direccion, @PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) {
-//        //Result result = direccionDAOImplementacion.Update(direccion);
-//        Result result = direccionJPADAOImplementacion.Update(direccion);
-//
-//        redirectAttributes.addFlashAttribute("msgDireccionEditada", "La direccion se editó correctamente");
-//        return "redirect:/UsuarioIndex/usuario-detalles/" + idUsuario;
-//    }
+
 //
 //    @PostMapping("updateImage/{idUsuario}")
 //    public String UpdateImage(@RequestParam("imagenFile") MultipartFile imagenFile, @PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) {

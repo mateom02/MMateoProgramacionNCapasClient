@@ -147,7 +147,7 @@
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 <h4 class="modal-title">Actualizar usuario</h4>
                             </div>
-                            <form  id="formUpdateUser" th:object="${usuario}" >
+                            <form  id="formUpdateUser" th:action="@{/UsuarioIndex/update}" method="POST" th:object="${usuario}" >
                                 <input type="hidden" id="idUsuario" th:field="*{IdUsuario}">
                                 <label>Nombre</label>
                                 <input type="text"  th:value="${usuario.Nombre}"  id="nombre" th:field="*{Nombre}" >
@@ -231,26 +231,26 @@
                                     <option value=0 selected="selected"  >
                                         Seleccione un pais
                                     </option>
-                                    <option th:each="pais : ${paises}" 
-                                            th:value="${pais.IdPais}" 
+                                    <option th:each="pais : ${paises}"
+                                            th:value="${pais.IdPais}"
                                             th:text="${pais.Nombre}" >
                                     </option>
                                 </select>
-                                <select class="form-control"  
+                                <select class="form-control"
                                         id="ddlestado" >
-                                    <option value="0" > 
+                                    <option value="0" >
                                         Seleccione un Estado</option>
                                     <option th:each="estado: ${estados}" th:value="${estado.IdEstado}" th:text="${estado.Nombre}" ></option>
                                 </select>
-                                <select class="form-control"  
+                                <select class="form-control"
                                         id="ddlmunicipio">
-                                    <option value="0"> 
+                                    <option value="0">
                                         Seleccione un Municipio</option>
                                     <option th:each="municipio: ${municipios}" th:value="${municipio.IdMunicipio}" th:text="${municipio.Nombre}" ></option>
                                 </select>
-                                <select class="form-control"  
+                                <select class="form-control"
                                         id="ddlcolonia" required="required">
-                                    <option value="0"> 
+                                    <option value="0">
                                         Seleccione una colonia</option>
                                 </select>
                                 <input type="hidden"  th:value="${usuario.IdUsuario}" name="IdUsuario">
@@ -266,7 +266,7 @@
                             </div>
                         </div>
                     </div>
-                </div> 
+                </div>
 
 
                 <div class="modal fade"  id="modalEditDireccion">
@@ -292,151 +292,153 @@
         </div>  
 
         <script>
-            $("#btnEditarInformacion").click(function () {
-            $("#modalFormulario").modal("show");
-            });
-            $("#btnAgregarDireccion").click(function () {
-            $("#modalAddDireccion").modal("show");
-            });
-            $("#btnEditarImagen").click(function (){
-            console.log("click");
-            $("#modalActualizarImagen").modal("show");
-            });
-            $('#ddlpais').change(function () {
+    const urlBase = "http://localhost:8080/";
 
-            console.log($(this).val());
-            $.ajax({
-            url: "/UsuarioIndex/Estado/" + $(this).val(),
-                    type: "GET",
-                    datatype: "json",
-                    success: function (data, textStatus, jqXHR) {
-                    $("#ddlestado").empty();
-                    $("#ddlmunicipio").empty();
-                    $("#ddlcolonia").empty();
-                    $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>");
-                    $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
-                    $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
-                    console.log(data.objects);
-                    $.each(data.objects, function (i, estado) {
-                    $("#ddlestado").append("<option value= " + estado.idEstado + " > " + estado.nombre + "</option>");
-                    });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                    alert("No hay datos que mostrar");
-                    }
+    $("#btnEditarInformacion").click(function () {
+    $("#modalFormulario").modal("show");
+    });
+    $("#btnAgregarDireccion").click(function () {
+    $("#modalAddDireccion").modal("show");
+    });
+    $("#btnEditarImagen").click(function (){
+    console.log("click");
+    $("#modalActualizarImagen").modal("show");
+    });
+    $('#ddlpais').change(function () {
+
+    console.log($(this).val());
+    $.ajax({
+    url: "/UsuarioIndex/Estado/" + $(this).val(),
+            type: "GET",
+            datatype: "json",
+            success: function (data, textStatus, jqXHR) {
+            $("#ddlestado").empty();
+            $("#ddlmunicipio").empty();
+            $("#ddlcolonia").empty();
+            $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>");
+            $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
+            $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
+            console.log(data.objects);
+            $.each(data.objects, function (i, estado) {
+            $("#ddlestado").append("<option value= " + estado.idEstado + " > " + estado.nombre + "</option>");
             });
-            });
-            $('#ddlestado').change(function () {
-            $.ajax({
-            url: "/UsuarioIndex/Municipio/" + $('#ddlestado').val(),
-                    type: "GET",
-                    datatype: "json",
-                    success: function (data, textStatus, jqXHR) {
-                    $("#ddlmunicipio").empty();
-                    $("#ddlcolonia").empty();
-                    $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
-                    $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
-                    $.each(data.objects, function (i, municipio) {
-                    $("#ddlmunicipio").append("<option value= " + municipio.idMunicipio + " > " + municipio.nombre + "</option>");
-                    });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                    alert("No hay datos que mostrar");
-                    }
-            });
-            $('#ddlmunicipio').change(function () {
-            $.ajax({
-            url: "/UsuarioIndex/Colonia/" + $(this).val(),
-                    type: "GET",
-                    datatype: "json",
-                    success: function (data, textStatus, jqXHR) {
-                    $("#ddlcolonia").empty();
-                    $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
-                    $.each(data.objects, function (i, colonia) {
-                    $("#ddlcolonia").append("<option value= " + colonia.idColonia + " > " + colonia.nombre + "</option>");
-                    });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                    alert("No hay datos que mostrar");
-                    }
-            });
-            });
-            });
-            function FormDireccionEditable(idDireccion) {
-            $("#modalEditDireccion").modal("show");
-            let direccion;
-            $.ajax({
-            url: "/UsuarioIndex/DireccionById/" + idDireccion,
-                    type: "GET",
-                    datatype: "json",
-                    success: function (data, textStatus, jqXHR) {
-                    direccion = data.object;
-                    $("#idDireccion").val(direccion.idDireccion);
-                    $("#idCalle").val(direccion.calle);
-                    $("#idNumeroInterior").val(direccion.numeroInterior);
-                    $("#idNumeroExterior").val(direccion.numeroExterior);
-                    $("#idColonia").val(direccion.Colonia.idColonia);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                    console.error("Error al cargar dirección");
-                    }
-            });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+            alert("No hay datos que mostrar");
             }
+    });
+    });
+    $('#ddlestado').change(function () {
+    $.ajax({
+    url: "/UsuarioIndex/Municipio/" + $('#ddlestado').val(),
+            type: "GET",
+            datatype: "json",
+            success: function (data, textStatus, jqXHR) {
+            $("#ddlmunicipio").empty();
+            $("#ddlcolonia").empty();
+            $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
+            $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
+            $.each(data.objects, function (i, municipio) {
+            $("#ddlmunicipio").append("<option value= " + municipio.idMunicipio + " > " + municipio.nombre + "</option>");
+            });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+            alert("No hay datos que mostrar");
+            }
+    });
+    $('#ddlmunicipio').change(function () {
+    $.ajax({
+    url: "/UsuarioIndex/Colonia/" + $(this).val(),
+            type: "GET",
+            datatype: "json",
+            success: function (data, textStatus, jqXHR) {
+            $("#ddlcolonia").empty();
+            $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
+            $.each(data.objects, function (i, colonia) {
+            $("#ddlcolonia").append("<option value= " + colonia.idColonia + " > " + colonia.nombre + "</option>");
+            });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+            alert("No hay datos que mostrar");
+            }
+    });
+    });
+    });
+    function FormDireccionEditable(idDireccion) {
+    $("#modalEditDireccion").modal("show");
+    let direccion;
+    $.ajax({
+    url: urlBase  + idDireccion,
+            type: "GET",
+            datatype: "json",
+            success: function (data, textStatus, jqXHR) {
+            direccion = data.object;
+            $("#idDireccion").val(direccion.idDireccion);
+            $("#idCalle").val(direccion.calle);
+            $("#idNumeroInterior").val(direccion.numeroInterior);
+            $("#idNumeroExterior").val(direccion.numeroExterior);
+            $("#idColonia").val(direccion.Colonia.idColonia);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+            console.error("Error al cargar dirección");
+            }
+    });
+    }
 
-            function confimarEliminarDireccion(idDireccion, idUsuario) {
-            console.log("Eliminando...");
+    function confimarEliminarDireccion(idDireccion, idUsuario) {
+    console.log("Eliminando...");
+    Swal.fire({
+    text: "¿Seguro que quieres eliminar la direccion?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, borrar!"
+    }).then((result) => {
+
+    if (result.isConfirmed) {
+    console.log("Si");
+    $.ajax({
+    url: "/UsuarioIndex/deleteDireccion/" + idDireccion + "/" + idUsuario,
+            type: "GET",
+            datatype: "json",
+            success: function (data, textStatus, jqXHR) {
+            if (data.correct) {
             Swal.fire({
-            text: "¿Seguro que quieres eliminar la direccion?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Sí, borrar!"
-            }).then((result) => {
-
-            if (result.isConfirmed) {
-            console.log("Si");
-            $.ajax({
-            url: "/UsuarioIndex/deleteDireccion/" + idDireccion + "/" + idUsuario,
-                    type: "GET",
-                    datatype: "json",
-                    success: function (data, textStatus, jqXHR) {
-                    if (data.correct) {
-                    Swal.fire({
-                    title: "Deleted!",
-                            text: "Your direccion has been deleted.",
-                            icon: "success"
-                    });
-                    window.location.href = 'http://localhost:8080/UsuarioIndex/usuario-detalles/' + idUsuario;
-                    }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                    alert("algo salio mal");
-                    }
+            title: "Deleted!",
+                    text: "Your direccion has been deleted.",
+                    icon: "success"
             });
+            window.location.href = 'http://localhost:8080/UsuarioIndex/usuario-detalles/' + idUsuario;
             }
-
-            });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+            alert("algo salio mal");
             }
+    });
+    }
+
+    });
+    }
 
 
 
 
-            function form_submit() {
-            document.getElementById("formUpdateUser").submit();
-            }
+    function form_submit() {
+    document.getElementById("formUpdateUser").submit();
+    }
 
-            function enviarDireccion() {
-            document.getElementById("formAddDireccion").submit();
-            }
+    function enviarDireccion() {
+    document.getElementById("formAddDireccion").submit();
+    }
 
-            function modificarDireccion() {
-            document.getElementById("formEdiDireccion").submit();
-            }
+    function modificarDireccion() {
+    document.getElementById("formEdiDireccion").submit();
+    }
 
-            function actualizarImagenSubmit(){
-            document.getElementById("formEditImagen").submit();
-            }
+    function actualizarImagenSubmit(){
+    document.getElementById("formEditImagen").submit();
+    }
 
 
         </script>
