@@ -12,13 +12,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.net.http.HttpClient;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
@@ -26,7 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
@@ -60,13 +60,13 @@ public class UsuarioIndex {
                 urlBase + "api/usuario",
                 HttpMethod.GET,
                 HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Usuario>>>() {
-                });
+        });
 
         ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                 urlBase + "api/rol",
                 HttpMethod.GET,
                 HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
-                });
+        });
 
         if (responseEntityUsuario.getStatusCode().value() == 200 && responseEntityRol.getStatusCode().value() == 200) {
             Result resultUsuario = responseEntityUsuario.getBody();
@@ -88,17 +88,17 @@ public class UsuarioIndex {
         ResponseEntity<Result<Usuario>> responseEntityUsuario = restTemplate.exchange(urlBase + "api/usuario/" + idUsuario,
                 HttpMethod.GET, HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Result<Usuario>>() {
-                });
+        });
 
         ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                 urlBase + "api/rol",
                 HttpMethod.GET,
                 HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
-                });
+        });
 
         ResponseEntity<Result<List<Pais>>> responseEntityPais = restTemplate.exchange(
                 urlBase + "api/pais", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Pais>>>() {
-                });
+        });
 
         if (responseEntityUsuario.getStatusCode().value() == 200
                 && responseEntityRol.getStatusCode().value() == 200
@@ -124,13 +124,13 @@ public class UsuarioIndex {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Result<List<Pais>>> responseEntityPaises = restTemplate.exchange(
                 urlBase + "api/pais", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Pais>>>() {
-                });
+        });
 
         ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                 urlBase + "api/rol",
                 HttpMethod.GET,
                 HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
-                });
+        });
 
         if (responseEntityPaises.getStatusCode().value() == 200 && responseEntityRol.getStatusCode().value() == 200) {
             Result resultPaises = responseEntityPaises.getBody();
@@ -170,9 +170,9 @@ public class UsuarioIndex {
 
     @PostMapping("add")
     public String Add(@ModelAttribute("usuario") Usuario usuario,
-                      BindingResult bindingResult, Model model,
-                      RedirectAttributes redirectAttributes,
-                      @RequestParam("imagenFile") MultipartFile imagenFile) throws IOException {
+            BindingResult bindingResult, Model model,
+            RedirectAttributes redirectAttributes,
+            @RequestParam("imagenFile") MultipartFile imagenFile) throws IOException {
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -180,13 +180,13 @@ public class UsuarioIndex {
         if (bindingResult.hasErrors()) {
             ResponseEntity<Result<List<Pais>>> responseEntityPaises = restTemplate.exchange(
                     urlBase + "api/pais", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Pais>>>() {
-                    });
+            });
 
             ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                     urlBase + "api/rol",
                     HttpMethod.GET,
                     HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
-                    });
+            });
 
             if (responseEntityPaises.getStatusCode().value() == 200 && responseEntityRol.getStatusCode().value() == 200) {
                 Result resultPaises = responseEntityPaises.getBody();
@@ -201,7 +201,7 @@ public class UsuarioIndex {
 
                 ResponseEntity<Result<List<Estado>>> responseEntityEstados = restTemplate.exchange(
                         urlBase + "api/estado/" + usuario.Direcciones.get(0).Colonia.Municipio.Estado.Pais.getIdPais(), HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Estado>>>() {
-                        });
+                });
                 if (responseEntityEstados.getStatusCode().value() == 200) {
                     Result resultEstados = responseEntityEstados.getBody();
                     model.addAttribute("estados", resultEstados.object);
@@ -209,7 +209,7 @@ public class UsuarioIndex {
                     if (usuario.Direcciones.get(0).Colonia.Municipio.Estado.getIdEstado() > 0) {
                         ResponseEntity<Result<List<Municipio>>> responseEntityMunicipios = restTemplate.exchange(
                                 urlBase + "api/estado/" + usuario.Direcciones.get(0).Colonia.Municipio.Estado.Pais.getIdPais(), HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Municipio>>>() {
-                                });
+                        });
 
                         if (responseEntityEstados.getStatusCode().value() == 200) {
                             Result resultMunicipios = responseEntityEstados.getBody();
@@ -302,11 +302,11 @@ public class UsuarioIndex {
     @PostMapping("updateDireccion/{idUsuario}")
     public String UpdateDireccion(@ModelAttribute("Direccion") Direccion direccion, @PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) {
 
-        RestTemplate restTemplate  = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders jsonHeader = new HttpHeaders();
         jsonHeader.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Direccion> direccionData = new HttpEntity<>(direccion, jsonHeader);
-        ResponseEntity<String> response = restTemplate.exchange(urlBase+ "api/direccion/" + idUsuario, HttpMethod.PUT, direccionData, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(urlBase + "api/direccion/" + idUsuario, HttpMethod.PUT, direccionData, String.class);
 
         int status = response.getStatusCode().value();
 
@@ -317,13 +317,13 @@ public class UsuarioIndex {
     @PostMapping
     public String GetAllDinamico(@ModelAttribute("usuario") Usuario usuario, Model model) {
 
-        RestTemplate restTemplate= new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<Usuario> usuarioData = new HttpEntity<>(usuario);
         ResponseEntity<Result<List<Rol>>> resultResponseEntityRoles = restTemplate.exchange(urlBase + "api/rol",
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
                 new ParameterizedTypeReference<Result<List<Rol>>>() {
-                });
+        });
 
         ResponseEntity<Result<List<Usuario>>> responseEntity = restTemplate.exchange(
                 urlBase + "api/usuario/search",
@@ -333,7 +333,7 @@ public class UsuarioIndex {
         });
 
         //Manejar el error
-        if(responseEntity.getStatusCode().value() == 200 && resultResponseEntityRoles.getStatusCode().value() ==200) {
+        if (responseEntity.getStatusCode().value() == 200 && resultResponseEntityRoles.getStatusCode().value() == 200) {
             Result resultUsuarios = responseEntity.getBody();
             Result resultRoles = resultResponseEntityRoles.getBody();
             model.addAttribute("usuarios", resultUsuarios.object);
@@ -345,7 +345,51 @@ public class UsuarioIndex {
 
     }
 
-//
+    @PostMapping("updateImage/{idUsuario}")
+    public String UpdateImage(@RequestParam("imagenFile") MultipartFile imagenFile, @PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) throws IOException {
+
+        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+
+        MultiValueMap<String, Object> multipartRequest = new LinkedMultiValueMap<>();
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        if (imagenFile != null) {
+            HttpHeaders fileHeaders = new HttpHeaders();
+
+            String extension = imagenFile.getOriginalFilename().split("\\.")[1];
+            if (extension.equals("jpg") || extension.equals("jpeg")) {
+                fileHeaders.setContentType(MediaType.IMAGE_JPEG);
+            } else if (extension.equals("png")) {
+                fileHeaders.setContentType(MediaType.IMAGE_PNG);
+            } else {
+                fileHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            }
+
+            ByteArrayResource fileAsResource = new ByteArrayResource(imagenFile.getBytes()) {
+                @Override
+                public String getFilename() {
+                    return imagenFile.getOriginalFilename();
+                }
+            };
+
+            HttpEntity<ByteArrayResource> filePart = new HttpEntity<>(fileAsResource, fileHeaders);
+            multipartRequest.add("imagenFile", filePart);
+        }
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(multipartRequest, requestHeaders);
+
+        
+        
+//        ResponseEntity<String> response = restTemplate.exchange(urlBase + "api/usuario/imagen" + idUsuario, HttpMethod.PATCH, requestEntity, String.class);
+        Result response = restTemplate.patchForObject(urlBase + "api/usuario/imagen/" + idUsuario, requestEntity, Result.class);
+
+        
+
+        redirectAttributes.addFlashAttribute("msgImagenEditada", "La imagen se editó correctamente");
+        return "redirect:/UsuarioIndex/usuario-detalles/" + idUsuario;
+    }
+
 //    //Carga masiva
 //    @GetMapping("CargaMasiva")
 //    public String CargaMasiva() {
@@ -536,40 +580,10 @@ public class UsuarioIndex {
 //
 //
 //
-
 //
-
 //
-
 //
-
 //
-//    @PostMapping("updateImage/{idUsuario}")
-//    public String UpdateImage(@RequestParam("imagenFile") MultipartFile imagenFile, @PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes) {
-//
-//        String imagen = "";
-//
-//        if (imagenFile != null) {
-//            try {
-//                //vuelvo a asegurarme que es jpg o png
-//                String extension = imagenFile.getOriginalFilename().split("\\.")[1];
-//                if (extension.equals("jpg") || extension.equals("png")) {
-//                    byte[] byteImagen = imagenFile.getBytes();
-//                    String imagenBase64 = Base64.getEncoder().encodeToString(byteImagen);
-//                    imagen = imagenBase64;
-//                }
-//            } catch (IOException ex) {
-////                Logger.getLogger(UsuarioController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//
-//        }
-//
-//        //Result result = usuarioDAOImplementation.UpdateImage(idUsuario, imagen);
-//        Result result = usuarioJPADAOImplementacion.UpdateImagen(idUsuario, imagen);
-//
-//        redirectAttributes.addFlashAttribute("msgImagenEditada", "La imagen se editó correctamente");
-//        return "redirect:/UsuarioIndex/usuario-detalles/" + idUsuario;
-//    }
 //
 //    @GetMapping("deleteDireccion/{idDireccion}/{idUsuario}")
 //    @ResponseBody

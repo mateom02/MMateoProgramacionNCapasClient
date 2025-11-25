@@ -23,6 +23,7 @@ public class Usuario {
     private String Celular;
     private String Curp;
     private String Imagen;
+    public boolean status;
     public Rol Rol;
     public List<Direccion> Direcciones;
 

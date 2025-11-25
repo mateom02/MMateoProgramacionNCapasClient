@@ -175,6 +175,9 @@
                                 <td>
                                     <a class='btn btn-info' th:href="@{/UsuarioIndex/usuario-detalles/{IdUsuario}(IdUsuario=${usuario.IdUsuario})}">Ver</a>
                                     <a class='btn btn-danger' th:onclick="|confimarEliminarUsuario(${usuario.IdUsuario})|" >Eliminar</a>
+                                    <div class="form-check form-switch" >
+                                        <input class="form-check-input"th:onclick="|cambiarStatus(${usuario.IdUsuario}, ${usuario.status})|"  type="checkbox"  th:checked="${usuario.status}">
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -191,6 +194,7 @@
         </script>
 
         <script >
+            const urlBase = "http://localhost:8080/";
             function confimarEliminarUsuario(idUsuario) {
                 console.log("Eliminando...");
                 Swal.fire({
@@ -205,8 +209,8 @@
                     if (result.isConfirmed) {
                         console.log("Si");
                         $.ajax({
-                            url: "/UsuarioIndex/delete/" + idUsuario,
-                            type: "GET",
+                            url: urlBase + "api/usuario/" + idUsuario,
+                            type: "DELETE",
                             datatype: "json",
                             success: function (data, textStatus, jqXHR) {
                                 if (data.correct) {
@@ -215,7 +219,9 @@
                                         text: "El usuario se ha eliminado correctamente",
                                         icon: "success"
                                     });
-                                    location.reload();
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000);
                                 }
                             },
                             error: function (jqXHR, textStatus, errorThrown) {
@@ -226,6 +232,31 @@
 
                 });
             }
+
+            function  cambiarStatus(idUsuario, estatus) {
+
+                $.ajax({
+                    url: urlBase + "api/usuario/" + idUsuario + "/bajalogica",
+                    type: "PATCH",
+                    contentType: 'application/json',
+                    data: JSON.stringify(estatus),
+                    success: function (data, textStatus, jqXHR) {
+                        if (data.correct) {
+                            Swal.fire({
+                                title: "!Estatus actualizado!",
+                                text: "El estatus del usuario se ha actualizado correctamente",
+                                icon: "success"
+                            });
+                        }
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    }, error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(jqXHR);
+                    }
+                });
+            }
+
         </script>
 
 
