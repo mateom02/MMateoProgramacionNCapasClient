@@ -29,6 +29,11 @@
             <p class="text-succes">Los datos de tu archivo son validos!</p>
             <a class="btn btn-success" th:href="@{/UsuarioIndex/CargaMasiva/procesar}">Procesar</a>
         </div>
+        
+        <div th:if="${error}">
+            <p class="text-succes">Error al abrir el archivo</p>
+        </div>
+       
 
         <div th:if="${listaErrores}">
             <p class="text-danger">Tu archivo tiene algunos errores!</p>
@@ -53,54 +58,50 @@
 
         <script>
             function mostrarFormulario() {
-                document.getElementById("mostrarFormulario").style.display = "none";
-                document.getElementById("botones").style.display = "block";
+            document.getElementById("mostrarFormulario").style.display = "none";
+            document.getElementById("botones").style.display = "block";
             }
 
             let tipoArchivo = "";
-
             document.getElementById("btnExcel").addEventListener("click", function () {
-                tipoArchivo = "xlsx";
-                document.getElementById("formularioArchivo").style.display = "block";
-                document.getElementById("archivo").setAttribute("accept", ".xlsx");
-                document.getElementById("cargaMasiva").classList.remove("btn-primary");
-                document.getElementById("cargaMasiva").classList.add("btn-success");
+            tipoArchivo = "xlsx";
+            document.getElementById("formularioArchivo").style.display = "block";
+            document.getElementById("archivo").setAttribute("accept", ".xlsx");
+            document.getElementById("cargaMasiva").classList.remove("btn-primary");
+            document.getElementById("cargaMasiva").classList.add("btn-success");
             });
-
             document.getElementById("btnTxt").addEventListener("click", function () {
 
-                tipoArchivo = "txt"; // Tipo de archivo que se espera
-                document.getElementById("formularioArchivo").style.display = "block";
-                document.getElementById("archivo").setAttribute("accept", ".txt");
-                document.getElementById("cargaMasiva").classList.remove("btn-success");
-                document.getElementById("cargaMasiva").classList.add("btn-primary");
+            tipoArchivo = "txt"; // Tipo de archivo que se espera
+            document.getElementById("formularioArchivo").style.display = "block";
+            document.getElementById("archivo").setAttribute("accept", ".txt");
+            document.getElementById("cargaMasiva").classList.remove("btn-success");
+            document.getElementById("cargaMasiva").classList.add("btn-primary");
             });
-
             document.getElementById("archivo").addEventListener("change", function () {
-                if (this.files.length > 0) {
-                    var fileName = this.files[0].name;
-                    var fileExtension = fileName.split('.').pop().toLowerCase();
-
-                    if (fileExtension !== tipoArchivo) {
-                        alert("Por favor, seleccione un archivo " + tipoArchivo.toUpperCase() + " válido.");
-                        this.value = "";
-                    }
-                }
+            if (this.files.length > 0) {
+            var fileName = this.files[0].name;
+            var fileExtension = fileName.split('.').pop().toLowerCase();
+            if (fileExtension !== tipoArchivo) {
+            alert("Por favor, seleccione un archivo " + tipoArchivo.toUpperCase() + " válido.");
+            this.value = "";
+            }
+            }
             });
         </script>
         <script th:if="${msgCargaCorrecta}" th:inline="javascript">
             Swal.fire({
-                title: [[${msgCargaCorrecta}]],
-                icon: "success",
-                draggable: true
+            title: [[${msgCargaCorrecta}]],
+                    icon: "success",
+                    draggable: true
             });
         </script>
-        
+
         <script th:if="${msgCargaError}" th:inline="javascript">
             Swal.fire({
-                title: [[${msgCargaError}]],
-                icon: "error",
-                draggable: true
+            title: [[${msgCargaError}]],
+                    icon: "error",
+                    draggable: true
             });
         </script>
     </body>

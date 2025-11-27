@@ -23,7 +23,7 @@ public class Usuario {
     private String Celular;
     private String Curp;
     private String Imagen;
-    public boolean status;
+    public Boolean status;
     public Rol Rol;
     public List<Direccion> Direcciones;
 
@@ -172,4 +172,15 @@ public class Usuario {
         this.Imagen = Imagen;
     }
 
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+
+    
+    
 }

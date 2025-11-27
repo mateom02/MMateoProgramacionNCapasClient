@@ -10,6 +10,8 @@ import com.digis01.MMateoProgramacionNCapas.ML.Rol;
 import com.digis01.MMateoProgramacionNCapas.ML.Usuario;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
+import java.io.File;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -19,8 +21,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import javax.swing.text.html.parser.Entity;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -379,242 +384,108 @@ public class UsuarioIndex {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(multipartRequest, requestHeaders);
 
-        
-        
 //        ResponseEntity<String> response = restTemplate.exchange(urlBase + "api/usuario/imagen" + idUsuario, HttpMethod.PATCH, requestEntity, String.class);
         Result response = restTemplate.patchForObject(urlBase + "api/usuario/imagen/" + idUsuario, requestEntity, Result.class);
-
-        
 
         redirectAttributes.addFlashAttribute("msgImagenEditada", "La imagen se editó correctamente");
         return "redirect:/UsuarioIndex/usuario-detalles/" + idUsuario;
     }
 
-//    //Carga masiva
-//    @GetMapping("CargaMasiva")
-//    public String CargaMasiva() {
-//        return "CargaMasiva";
-//    }
-//
-//    @PostMapping("CargaMasiva")
-//    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo, Model model, HttpSession session) {
-//
-//        //Revisar tipo de archivo correcto
-//        String extension = archivo.getOriginalFilename().split("\\.")[1];
-//
-//        String pathBase = System.getProperty("user.dir");
-//        String pathArchivo = "src/main/resources/archivosCarga";
-//        String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmSS"));
-//        String pathDefinitvo = pathBase + "/" + pathArchivo + "/" + fecha + archivo.getOriginalFilename();
-//
-//        try {
-//            archivo.transferTo(new File(pathDefinitvo));
-//
-//        } catch (Exception e) {
-//            System.out.println(e.getLocalizedMessage());
-//        }
-//
-//        //Inicializar lista de usuarios para guardar
-//        List<Usuario> usuarios = new ArrayList<>();
-//
-//        if (extension.equals("txt")) {
-//            usuarios = LecturaArchivoTXT(pathDefinitvo);
-//        } else if (extension.equals("xlsx")) {
-//            usuarios = LecturaArchivoXLSX(pathDefinitvo);
-//        } else {
-//            //Mensaje de error
-//        }
-//
-//        //Validar lista de usuarios
-//        List<ErrorCarga> listaErrores = ValidarDatosArchivo(usuarios);
-//
-//        if (listaErrores.isEmpty()) {
-//            model.addAttribute("correcto", true);
-//            session.setAttribute("archivoCargaMasiva", pathDefinitvo);
-//            //
-//            usuariosCargaMasiva.addAll(usuarios);
-//        } else {
-//            model.addAttribute("listaErrores", listaErrores);
-//        }
-//
-//        return "CargaMasiva";
-//
-//    }
-//
-//    @GetMapping("CargaMasiva/procesar")
-//    public String CargaUsuarios(HttpSession session, RedirectAttributes redirectAttributes) {
-//
-//        System.out.println("Mensaje");
-//
-//        //Validar que usuarios carga masiva no sea null
-//        String path = session.getAttribute("archivoCargaMasiva").toString();
-//        session.removeAttribute("archivoCargaMasiva");
-//
-//        File file = new File(path);
-//        String extension = path.split("\\.")[1];
-//
-//        //Inicializar lista de usuarios para guardar
-//        List<Usuario> usuarios = new ArrayList<>();
-//
-//        if (extension.equals("txt")) {
-//            usuarios = LecturaArchivoTXT(path);
-//        } else if (extension.equals("xlsx")) {
-//            usuarios = LecturaArchivoXLSX(path);
-//        } else {
-//            //Mensaje de error
-//        }
-//
-//        try {
-//            Result result = usuarioJPADAOImplementacion.SaveAll(usuarios);
-//            redirectAttributes.addFlashAttribute("msgCargaCorrecta", "Los datos se guardaron correctamente");
-//            return "redirect:CargaMasiva";
-//        } catch (Exception e) {
-//            redirectAttributes.addFlashAttribute("msgCargaError", "Error al guardar los datos intente nuevamente");
-//            return "redirect:CargaMasiva";
-//        }
-//
-//    }
-//
-//    public List<Usuario> LecturaArchivoTXT(String path) {
-//
-//        List<Usuario> usuarios = new ArrayList<>();
-//
-//        try (InputStream inputStream = new FileInputStream(path); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));) {
-//
-//            String linea = "";
-//
-//            while ((linea = bufferedReader.readLine()) != null) {
-//                //Extraer los datos
-//                String[] campos = linea.split("\\|");
-//                Usuario usuario = new Usuario();
-//                usuario.setUserName(campos[0]);
-//                usuario.setNombre(campos[1]);
-//                usuario.setApellidoPaterno(campos[2]);
-//                usuario.setApellidoMaterno(campos[3]);
-//                usuario.setEmail(campos[4]);
-//                usuario.setPassword(campos[5]);
-//                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-//                String fechaIngresada = campos[6];
-//                Date fechaFormateda = formatter.parse(fechaIngresada);
-//                usuario.setFechaNacimiento(fechaFormateda);
-//                usuario.setSexo(campos[7]);
-//                usuario.setTelefono(campos[8]);
-//                usuario.setCelular(campos[9]);
-//                usuario.setCurp(campos[10]);
-//                usuario.Rol = new Rol();
-//                usuario.Rol.setIdRol(Integer.parseInt(campos[11]));
-//
-//                usuarios.add(usuario);
-//
-//            }
-//
-//        } catch (Exception e) {
-//            System.out.println(e.getLocalizedMessage());
-//            return null;
-//        }
-//
-//        System.out.println(usuarios.isEmpty());
-//        return usuarios;
-//    }
-//
-//    public List<Usuario> LecturaArchivoXLSX(String pathDefinitvo) {
-//        List<Usuario> usuarios = new ArrayList<>();
-//
-//        try (XSSFWorkbook workbook = new XSSFWorkbook(pathDefinitvo)) {
-//            XSSFSheet sheet = workbook.getSheetAt(0);
-//
-//            for (Row row : sheet) {
-//                Usuario usuario = new Usuario();
-//                usuario.setUserName(row.getCell(0).toString().trim());
-//                usuario.setNombre(row.getCell(1).toString().trim());
-//                usuario.setApellidoPaterno(row.getCell(2).toString().trim());
-//                usuario.setApellidoMaterno(row.getCell(3).toString().trim());
-//                usuario.setEmail(row.getCell(4).toString().trim());
-//                usuario.setPassword(row.getCell(5).toString().trim());
-//                usuario.setFechaNacimiento(row.getCell(6).getDateCellValue());
-//                usuario.setSexo(row.getCell(7).toString().trim());
-//                DataFormatter formatter = new DataFormatter();
-//                Cell cellPhone = row.getCell(8);
-//                Cell cellCelular = row.getCell(9);
-//
-//                String phone = formatter.formatCellValue(cellPhone);
-//                String celular = formatter.formatCellValue(cellCelular);
-//
-//                usuario.setTelefono(phone);
-//                usuario.setCelular(celular);
-//                usuario.setCurp(row.getCell(10).toString().trim());
-//                usuario.Rol = new Rol();
-//                usuario.Rol.setIdRol((int) row.getCell(11).getNumericCellValue());
-//                usuarios.add(usuario);
-//            }
-//
-//        } catch (Exception e) {
-//            System.out.println(e.getLocalizedMessage());
-//            usuarios = null;
-//        }
-//        return usuarios;
-//    }
-//
-//    public List<ErrorCarga> ValidarDatosArchivo(List<Usuario> usuarios) {
-//
-//        List<ErrorCarga> errores = new ArrayList<>();
-//
-//        int linea = 1;
-//        for (Usuario usuario : usuarios) {
-//
-//            BindingResult bindingResult = validacionService.validateObject(usuario);
-//            List<ObjectError> errors = bindingResult.getAllErrors();
-//
-//            for (ObjectError error : errors) {
-//                FieldError fieldError = (FieldError) error;
-//                ErrorCarga errorCarga = new ErrorCarga();
-//                errorCarga.campo = fieldError.getField();
-//                errorCarga.descripcion = fieldError.getDefaultMessage();
-//                errorCarga.linea = linea;
-//                errores.add(errorCarga);
-//            }
-//            linea++;
-//        }
-//        return errores;
-//    }
-//
-//
-//
-//
-//
-//
-//
-//
-//    @GetMapping("deleteDireccion/{idDireccion}/{idUsuario}")
-//    @ResponseBody
-//    public Result DeleteDireccion(@PathVariable("idDireccion") int idDireccion, @PathVariable("idUsuario") int idUsuario, RedirectAttributes redirectAttributes
-//    ) {
-//
-//        //Result result = direccionDAOImplementacion.Delete(idDireccion);
-//        Result result = direccionJPADAOImplementacion.Delete(idDireccion);
-//
-//        return result;
-//
-//    }
-//
-//    @GetMapping("delete/{idUsuario}")
-//    @ResponseBody
-//    public Result Delete(@PathVariable("idUsuario") int idUsuario) {
-//
-//        Result result = usuarioJPADAOImplementacion.Delete(idUsuario);
-//
-//        return result;
-//    }
-//    @GetMapping("buscar")
-//    public String BuscarDinamicamente(@RequestParam("nombre") String nombre,
-//            @RequestParam("apellidoPaterno") String apellidoPaterno, @RequestParam("apellidoMaterno") String apellidoMaterno,
-//            @RequestParam("nombreRol") String nombreRol, Model model) {
-//
-//        Result result = usuarioDAOImplementation.GetAllDinamico(nombre, apellidoPaterno, apellidoMaterno, nombreRol);
-//
-//        model.addAttribute("usuarios", result.objects);
-//
-//        return "UsuarioIndex";
-//
-//    }
+    //Carga masiva
+    @GetMapping("CargaMasiva")
+    public String CargaMasiva() {
+        return "CargaMasiva";
+    }
+
+    @PostMapping("CargaMasiva")
+    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo, Model model, HttpSession session) {
+        try {
+
+            if (archivo.isEmpty()) {
+                model.addAttribute("error", "El archivo está vacío");
+                return "CargaMasiva";
+            }
+
+            Resource resource = archivo.getResource();
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("file", resource);
+
+            HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(body, headers);
+
+            // Manejo de excepciones en la llamada HTTP
+            ResponseEntity<Result> response = restTemplate.exchange(
+                    urlBase + "api/usuario/cargaMasivaValidar",
+                    HttpMethod.POST,
+                    httpEntity,
+                    Result.class
+            );
+
+            if (response.getStatusCode().value() == 200) {
+                Result result = response.getBody();
+                session.setAttribute("token", result.object);
+                model.addAttribute("correcto", true);
+            } else if (response.getStatusCode().value() == 222) {
+                Result result = response.getBody();
+                model.addAttribute("listaErrores", result.objects);
+                model.addAttribute("error", "Error en la validación del archivo");
+            } else {
+                model.addAttribute("error", "Error al abrir el archivo");
+            }
+
+        } catch (Exception ex) {
+            model.addAttribute("error", "Error interno del sistema");
+        }
+
+        return "CargaMasiva";
+    }
+
+    @GetMapping("CargaMasiva/procesar")
+    public String CargaUsuarios(HttpSession session, RedirectAttributes redirectAttributes) {
+
+        try {
+
+            Object tokenObj = session.getAttribute("token");
+            if (tokenObj == null) {
+                redirectAttributes.addFlashAttribute("msgCargaError",
+                        "Token de sesión no encontrado. Por favor, cargue el archivo nuevamente.");
+                return "redirect:/UsuarioIndex/CargaMasiva";
+            }
+
+            String token = tokenObj.toString();
+            session.removeAttribute("token");
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders header = new HttpHeaders();
+            header.setBearerAuth(token);
+            HttpEntity<String> entity = new HttpEntity<>(header);
+
+            // Manejar posibles excepciones en la llamada HTTP
+            ResponseEntity<Result> responseEntity = restTemplate.exchange(
+                    urlBase + "api/usuario/cargaMasivaProcesar",
+                    HttpMethod.POST,
+                    entity,
+                    Result.class
+            );
+
+            if (responseEntity.getStatusCode().value() == 200) {
+                redirectAttributes.addFlashAttribute("msgCargaCorrecta",
+                        "Los datos se guardaron correctamente");
+            } else {
+
+                redirectAttributes.addFlashAttribute("msgCargaError", "Error al procesar la carga intentelo nuevamente");
+            }
+
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("msgCargaError",
+                    "Error inesperado al procesar la carga. Por favor, intente nuevamente.");
+        }
+
+        return "redirect:/UsuarioIndex/CargaMasiva";
+    }
+
 }

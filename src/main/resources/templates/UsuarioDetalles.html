@@ -56,6 +56,36 @@
                 text-align: center;
             }
 
+            .contenedor-textinput {
+                background-color: var(--bg-componente);
+                border: 1px solid #2a2c30;
+                border-radius: 12px;
+                padding: 0.2rem 0.5rem;
+                color: var(--text-main);
+                font-family: 'Inter', sans-serif;
+            }
+
+            .contenedor-textinput input {
+                background: transparent;
+                border: none;
+                outline: none;
+                color: var(--text-main);
+                font-size: 0.875rem;
+            }
+
+            .contenedor-textinput select{
+                background-color: var(--bg-componente);
+                border: none;
+                outline: none;
+                color: var(--text-main);
+                font-size: 0.875rem;
+            }
+
+
+            label{
+                color:var(--text-main);
+                font-size: 1.1rem;
+            }
         </style>
 
     </head>
@@ -142,7 +172,7 @@
                 <div class="modal fade" id="modalFormulario" role="dialog">
                     <div class="modal-dialog">
                         <!-- Modal content-->
-                        <div class="modal-content">
+                        <div class="modal-content  modal-lg bg-dark">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 <h4 class="modal-title">Actualizar usuario</h4>
@@ -150,44 +180,63 @@
                             <form  id="formUpdateUser" th:action="@{/UsuarioIndex/update}" method="POST" th:object="${usuario}" >
                                 <input type="hidden" id="idUsuario" th:field="*{IdUsuario}">
                                 <label>Nombre</label>
-                                <input type="text"  th:value="${usuario.Nombre}"  id="nombre" th:field="*{Nombre}" >
+                                <div class="contenedor-textinput">
+                                    <input type="text"  th:value="${usuario.Nombre}"  id="nombre" th:field="*{Nombre}" >
+                                </div>
                                 <label>Apellido Paterno</label>
-                                <input type="text" th:value="${usuario.ApellidoPaterno}"  id="apellidoPaterno" th:field="*{ApellidoPaterno}" >
+                                <div class="contenedor-textinput">
+                                    <input type="text" th:value="${usuario.ApellidoPaterno}"  id="apellidoPaterno" th:field="*{ApellidoPaterno}" >
+                                </div>
                                 <label>Apellido Materno</label>
-                                <input type="text" th:value="${usuario.ApellidoMaterno}"  id="apellidoMaterno" name="ApellidoMaterno" th:field="*{ApellidoMaterno}" >
+                                <div class="contenedor-textinput">
+                                    <input type="text" th:value="${usuario.ApellidoMaterno}"  id="apellidoMaterno" name="ApellidoMaterno" th:field="*{ApellidoMaterno}" >
+
+                                </div>
                                 <label>User Name</label>
-                                <input type="text" th:value="${usuario.UserName}" id="userName" th:field="*{UserName}">
+                                <div class="contenedor-textinput">
+                                    <input type="text" th:value="${usuario.UserName}" id="userName" th:field="*{UserName}">
+                                </div>
                                 <label>CURP</label>
-                                <input type="text" th:value="${usuario.Curp}" id="curp" th:field="*{Curp}" >
-
+                                <div class="contenedor-textinput">
+                                    <input type="text" th:value="${usuario.Curp}" id="curp" th:field="*{Curp}" >
+                                </div>
                                 <label>Rol</label>
-                                <select  id="rol" class="form-control" th:value="${usuario.Rol.IdRol}" th:field="*{Rol.IdRol}">
-                                    <option value="0" selected >Seleccione un rol</option>
-                                    <option th:each="rol : ${roles}"
-                                            th:value="${rol.IdRol}"
-                                            th:text="${rol.Nombre}">
-                                    </option>
-                                </select>
+                                <div class="contenedor-textinput">
+                                    <select  id="rol" class="form-control" th:value="${usuario.Rol.IdRol}" th:field="*{Rol.IdRol}">
+                                        <option value="0" selected >Seleccione un rol</option>
+                                        <option th:each="rol : ${roles}"
+                                                th:value="${rol.IdRol}"
+                                                th:text="${rol.Nombre}">
+                                        </option>
+                                    </select>
+                                </div>
                                 <label>Email</label>
-                                <input type="text"  id="email" th:field="*{Email}"/>
+                                <div class="contenedor-textinput">
+                                    <input type="text"  id="email" th:field="*{Email}"/>
+                                </div>
                                 <label >Celular</label>
-                                <input type="text"  id="celular"  th:field="*{Celular}"/>
+                                <div class="contenedor-textinput">
+                                    <input type="text"  id="celular"  th:field="*{Celular}"/>
+                                </div>
                                 <label >Telefono</label>
-                                <input type="text"  id="telefono"  th:field="*{Telefono}"/>
+                                <div class="contenedor-textinput">
+                                    <input type="text"  id="telefono"  th:field="*{Telefono}"/>
+                                </div>
                                 <label >Fecha de Nacimiento</label>
-                                <input type="date"  id="fechaNacimiento" th:field="*{FechaNacimiento}"/>
-                                <p th:text="${usuario.Sexo == 'M '}"></p>
-                                <input type="radio" id='inputM'  th:field="*{Sexo}" value="M " ><label for="inputM">Masculino</label>
-                                <input type="radio"  id='inputF' th:field="*{Sexo}" value="F " ><label for="inputF">Femenino</label>
-
+                                <div>
+                                    <input type="date"  id="fechaNacimiento" th:field="*{FechaNacimiento}"/>
+                                </div>
+                                <label>Sexo</label>
+                                <div class="contenedor-textinput">
+                                    <input type="radio" id='inputM'  th:field="*{Sexo}" value="M " ><label for="inputM">Masculino</label>
+                                    <input type="radio"  id='inputF' th:field="*{Sexo}" value="F " ><label for="inputF">Femenino</label>
+                                </div>
                             </form>
-
                             <div class="modal-footer">
                                 <button  onclick="form_submit()">Enviar</button>
                                 <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>  
@@ -452,16 +501,16 @@
                     processData: false,
                     contentType: false,
                     success: function (data, textStatus, jqXHR) {
-                        if (data.correct) {
-                        Swal.fire({
-                        title: "Imagen Actualizada!",
-                                text: "La imagen del usuario se ha actualizado correctamente",
-                                icon: "success"
-                        });
-                        }
-                        setTimeout(() => {
-                        location.reload();
-                        }, 1000);
+                    if (data.correct) {
+                    Swal.fire({
+                    title: "Imagen Actualizada!",
+                            text: "La imagen del usuario se ha actualizado correctamente",
+                            icon: "success"
+                    });
+                    }
+                    setTimeout(() => {
+                    location.reload();
+                    }, 1000);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR);
