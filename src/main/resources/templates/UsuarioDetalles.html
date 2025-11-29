@@ -120,7 +120,7 @@
                             <div class='d-flex justify-content-evenly'>
                                 <div>
                                     <p>Fecha de nacimiento</p>
-                                    <p th:text='${usuario.FechaNacimiento}'>29 de Septiembre del 2002</p>
+                                    <p th:text='${usuario.FechaNacimiento}'></p>
                                 </div>
                                 <div>
                                     <p >Sexo</p>
@@ -170,71 +170,108 @@
 
                 <!-- Actualizar usuario -->
                 <div class="modal fade" id="modalFormulario" role="dialog">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-xl">
                         <!-- Modal content-->
-                        <div class="modal-content  modal-lg bg-dark">
+                        <div class="modal-content  bg-dark">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 <h4 class="modal-title">Actualizar usuario</h4>
                             </div>
-                            <form  id="formUpdateUser" th:action="@{/UsuarioIndex/update}" method="POST" th:object="${usuario}" >
-                                <input type="hidden" id="idUsuario" th:field="*{IdUsuario}">
-                                <label>Nombre</label>
-                                <div class="contenedor-textinput">
-                                    <input type="text"  th:value="${usuario.Nombre}"  id="nombre" th:field="*{Nombre}" >
-                                </div>
-                                <label>Apellido Paterno</label>
-                                <div class="contenedor-textinput">
-                                    <input type="text" th:value="${usuario.ApellidoPaterno}"  id="apellidoPaterno" th:field="*{ApellidoPaterno}" >
-                                </div>
-                                <label>Apellido Materno</label>
-                                <div class="contenedor-textinput">
-                                    <input type="text" th:value="${usuario.ApellidoMaterno}"  id="apellidoMaterno" name="ApellidoMaterno" th:field="*{ApellidoMaterno}" >
+                            <div class="modal-body ">
+                                <div class="container-fluid">
+                                    <form  id="formUpdateUser" th:action="@{/UsuarioIndex/update}" method="POST" th:object="${usuario}" >
+                                        <input type="hidden" id="idUsuario" th:field="*{IdUsuario}">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label>Nombre</label>
+                                                <div class="contenedor-textinput">
+                                                    <input type="text"  th:value="${usuario.Nombre}"  id="nombre" th:field="*{Nombre}" >
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <label>Apellido Paterno</label>
+                                                <div class="contenedor-textinput">
+                                                    <input type="text" th:value="${usuario.ApellidoPaterno}"  id="apellidoPaterno" th:field="*{ApellidoPaterno}" >
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <label>Apellido Materno</label>
+                                                <div class="contenedor-textinput">
+                                                    <input type="text" th:value="${usuario.ApellidoMaterno}"  id="apellidoMaterno" name="ApellidoMaterno" th:field="*{ApellidoMaterno}" >
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                </div>
-                                <label>User Name</label>
-                                <div class="contenedor-textinput">
-                                    <input type="text" th:value="${usuario.UserName}" id="userName" th:field="*{UserName}">
-                                </div>
-                                <label>CURP</label>
-                                <div class="contenedor-textinput">
-                                    <input type="text" th:value="${usuario.Curp}" id="curp" th:field="*{Curp}" >
-                                </div>
-                                <label>Rol</label>
-                                <div class="contenedor-textinput">
-                                    <select  id="rol" class="form-control" th:value="${usuario.Rol.IdRol}" th:field="*{Rol.IdRol}">
-                                        <option value="0" selected >Seleccione un rol</option>
-                                        <option th:each="rol : ${roles}"
-                                                th:value="${rol.IdRol}"
-                                                th:text="${rol.Nombre}">
-                                        </option>
-                                    </select>
-                                </div>
-                                <label>Email</label>
-                                <div class="contenedor-textinput">
-                                    <input type="text"  id="email" th:field="*{Email}"/>
-                                </div>
-                                <label >Celular</label>
-                                <div class="contenedor-textinput">
-                                    <input type="text"  id="celular"  th:field="*{Celular}"/>
-                                </div>
-                                <label >Telefono</label>
-                                <div class="contenedor-textinput">
-                                    <input type="text"  id="telefono"  th:field="*{Telefono}"/>
-                                </div>
-                                <label >Fecha de Nacimiento</label>
-                                <div>
-                                    <input type="date"  id="fechaNacimiento" th:field="*{FechaNacimiento}"/>
-                                </div>
-                                <label>Sexo</label>
-                                <div class="contenedor-textinput">
-                                    <input type="radio" id='inputM'  th:field="*{Sexo}" value="M " ><label for="inputM">Masculino</label>
-                                    <input type="radio"  id='inputF' th:field="*{Sexo}" value="F " ><label for="inputF">Femenino</label>
-                                </div>
-                            </form>
+                                        <!-- Datos de contacto -->
+                                        <div class="row">
+                                            <div class="col">
+                                                <label>Email</label>
+                                                <div class="contenedor-textinput">
+                                                    <input type="text"  id="email" th:field="*{Email}"/>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <label >Celular</label>
+                                                <div class="contenedor-textinput">
+                                                    <input type="text"  id="celular"  th:field="*{Celular}"/>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <label >Telefono</label>
+                                                <div class="contenedor-textinput">
+                                                    <input type="text"  id="telefono"  th:field="*{Telefono}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col">
+                                                <label>User Name</label>
+                                                <div class="contenedor-textinput">
+                                                    <input type="text" th:value="${usuario.UserName}" id="userName" th:field="*{UserName}">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <label>CURP</label>
+                                                <div class="contenedor-textinput">
+                                                    <input type="text" th:value="${usuario.Curp}" id="curp" th:field="*{Curp}" >
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col">
+                                                <label>Rol</label>
+                                                <div class="contenedor-textinput">
+                                                    <select  id="rol" class="form-control" th:value="${usuario.Rol.IdRol}" th:field="*{Rol.IdRol}">
+                                                        <option value="0" selected >Seleccione un rol</option>
+                                                        <option th:each="rol : ${roles}"
+                                                                th:value="${rol.IdRol}"
+                                                                th:text="${rol.Nombre}">
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <label >Fecha de Nacimiento</label>
+                                                <div  class="contenedor-textinput">
+                                                    <input type="date"  id="fechaNacimiento" th:field="*{FechaNacimiento}"/>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <label>Sexo</label>
+                                                <div class="contenedor-textinput">
+                                                    <input type="radio" id='inputM'  th:field="*{Sexo}" value="M " ><label for="inputM">Masculino</label>
+                                                    <input type="radio"  id='inputF' th:field="*{Sexo}" value="F " ><label for="inputF">Femenino</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>  
+                            </div>
                             <div class="modal-footer">
-                                <button  onclick="form_submit()">Enviar</button>
-                                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                                <button class="btn-link" onclick="form_submit()">Enviar</button>
+                                <button class="btn-link"   type="button" data-bs-dismiss="modal">Cerrar</button>
                             </div>
                         </div>
                     </div>
@@ -261,7 +298,6 @@
                                         <button class="btn btn-warning" th:onclick="|FormDireccionEditable(${direccion.IdDireccion})|">Editar</button>
                                         <button id="btnBorrarDireccion" class='btn btn-danger' th:onclick="|confimarEliminarDireccion(${direccion.IdDireccion}, ${usuario.IdUsuario})|">Borrar</button>
                                     </td>
-
                                 </tr>
                             </tbody>
                         </table>
@@ -270,8 +306,7 @@
 
                 <!-- Modal agregarDirecciones -->
                 <div class="modal fade" id="modalAddDireccion">
-
-                    <div class="modal-dialog">
+                    <div class="modal-dialog  modal-lg">
                         <div class="modal-content">
 
                             <form method="POST" th:action="@{/UsuarioIndex/addDireccion}" id="formAddDireccion" th:object="${Direccion}">
