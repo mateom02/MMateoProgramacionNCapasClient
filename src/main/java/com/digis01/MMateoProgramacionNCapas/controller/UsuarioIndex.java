@@ -8,23 +8,15 @@ import com.digis01.MMateoProgramacionNCapas.ML.Pais;
 import com.digis01.MMateoProgramacionNCapas.ML.Result;
 import com.digis01.MMateoProgramacionNCapas.ML.Rol;
 import com.digis01.MMateoProgramacionNCapas.ML.Usuario;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import java.io.File;
 
 import java.io.IOException;
-import java.net.http.HttpClient;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
-import javax.swing.text.html.parser.Entity;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -37,16 +29,12 @@ import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -58,19 +46,31 @@ public class UsuarioIndex {
     private final static String urlBase = "http://localhost:8080/";
 
     @GetMapping
-    public String UsuarioIndex(Model model) {
+    public String UsuarioIndex(Model model, HttpSession httpSession) {
 
         RestTemplate restTemplate = new RestTemplate();
+        Object tokenObj = httpSession.getAttribute("token");
+//        if (tokenObj == null) {
+//            redirectAttributes.addFlashAttribute("msgCargaError",
+//                    "Token de sesión no encontrado. Por favor, cargue el archivo nuevamente.");
+//            return "redirect:/UsuarioIndex/CargaMasiva";
+//        }
+
+        String token = tokenObj.toString();
+
+        HttpHeaders tokenHeader = new HttpHeaders();
+        tokenHeader.setBearerAuth(token);
+        HttpEntity bodyHeader = new HttpEntity(tokenHeader);
         ResponseEntity<Result<List<Usuario>>> responseEntityUsuario = restTemplate.exchange(
                 urlBase + "api/usuario",
                 HttpMethod.GET,
-                HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Usuario>>>() {
+                bodyHeader, new ParameterizedTypeReference<Result<List<Usuario>>>() {
         });
 
         ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                 urlBase + "api/rol",
                 HttpMethod.GET,
-                HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
+                bodyHeader, new ParameterizedTypeReference<Result<List<Rol>>>() {
         });
 
         if (responseEntityUsuario.getStatusCode().value() == 200 && responseEntityRol.getStatusCode().value() == 200) {
@@ -87,22 +87,30 @@ public class UsuarioIndex {
     }
 
     @GetMapping("usuario-detalles/{IdUsuario}")
-    public String UsuarioDetalles(@PathVariable("IdUsuario") int idUsuario, Model model) {
+    public String UsuarioDetalles(@PathVariable("IdUsuario") int idUsuario, Model model, HttpSession httpSession) {
 
         RestTemplate restTemplate = new RestTemplate();
+
+        Object tokenObj = httpSession.getAttribute("token");
+        String token = tokenObj.toString();
+
+        HttpHeaders tokenHeader = new HttpHeaders();
+        tokenHeader.setBearerAuth(token);
+        HttpEntity bodyHeader = new HttpEntity(tokenHeader);
+        
         ResponseEntity<Result<Usuario>> responseEntityUsuario = restTemplate.exchange(urlBase + "api/usuario/" + idUsuario,
-                HttpMethod.GET, HttpEntity.EMPTY,
+                HttpMethod.GET, bodyHeader,
                 new ParameterizedTypeReference<Result<Usuario>>() {
         });
 
         ResponseEntity<Result<List<Rol>>> responseEntityRol = restTemplate.exchange(
                 urlBase + "api/rol",
                 HttpMethod.GET,
-                HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Rol>>>() {
+                bodyHeader, new ParameterizedTypeReference<Result<List<Rol>>>() {
         });
 
         ResponseEntity<Result<List<Pais>>> responseEntityPais = restTemplate.exchange(
-                urlBase + "api/pais", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Result<List<Pais>>>() {
+                urlBase + "api/pais", HttpMethod.GET, bodyHeader, new ParameterizedTypeReference<Result<List<Pais>>>() {
         });
 
         if (responseEntityUsuario.getStatusCode().value() == 200
